@@ -1,13 +1,6 @@
-import React, { createContext, useContext, useState } from 'react';
+import React, { createContext, useContext, useEffect, useState } from 'react';
+import { adicionarAlunoDB, Aluno, buscarAlunosDB, criarTabela } from './database';
 
-export type Aluno = {
-    id: string;
-    nome: string;
-    idade: string;
-    objetivo: string;
-    experiencia: string;
-    observacao: string;
-};
 
 type AlunoContextType = {
     alunos: Aluno[];
@@ -25,7 +18,15 @@ export const useAluno = () => {
 export const AlunoProvider = ({ children }: { children: React.ReactNode }) => {
         const [alunos, setAlunos] = useState<Aluno[]>([]);
 
+        useEffect(() => {
+            criarTabela();
+            buscarAlunosDB((dados: Aluno[]) => {
+                setAlunos(dados);
+            });
+        }, []);
+
         const adicionarAluno = (aluno: Aluno) => {
+            adicionarAlunoDB(aluno);
             setAlunos(prev => [...prev, aluno]);
         };
 
